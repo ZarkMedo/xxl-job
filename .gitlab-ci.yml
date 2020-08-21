@@ -1,0 +1,11 @@
+stages:
+   - build
+HandleBuild:
+  stage: build
+  script:
+    - p=`pwd`
+    - echo $p
+    - mvn clean package -Dmaven.test.skip=true
+    - cp xxl-job-admin/target/xxl-job-admin*.jar ./hsr-cron-job.jar
+    - ls
+    - bash deploy.sh hsr-cron-job
