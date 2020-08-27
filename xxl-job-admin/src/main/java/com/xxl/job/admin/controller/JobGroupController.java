@@ -57,6 +57,16 @@ public class JobGroupController {
 		return maps;
 	}
 
+	@RequestMapping("/findByAppName")
+	@ResponseBody
+	public XxlJobGroup pageList(HttpServletRequest request,
+										@RequestParam(required = true) String appName ) {
+
+		// page query
+
+		return xxlJobGroupDao.findByAppName(appName);
+	}
+
 	@RequestMapping("/save")
 	@ResponseBody
 	public ReturnT<String> save(XxlJobGroup xxlJobGroup){
