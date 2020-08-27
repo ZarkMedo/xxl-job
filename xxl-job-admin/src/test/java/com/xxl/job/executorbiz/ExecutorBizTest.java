@@ -16,8 +16,8 @@ import org.junit.Test;
 public class ExecutorBizTest {
 
     // admin-client
-    private static String addressUrl = "http://127.0.0.1:9999/";
-    private static String accessToken = null;
+    private static String addressUrl = "http://127.0.0.1:13130/";
+    private static String accessToken = "7c70b24e116a07c9046cf867bac3eb53";
 
     @Test
     public void beat() throws Exception {

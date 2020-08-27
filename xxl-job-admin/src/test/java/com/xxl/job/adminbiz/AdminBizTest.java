@@ -20,8 +20,8 @@ import java.util.List;
 public class AdminBizTest {
 
     // admin-client
-    private static String addressUrl = "http://127.0.0.1:8080/xxl-job-admin/";
-    private static String accessToken = null;
+    private static String addressUrl = "http://127.0.0.1:13130/";
+    private static String accessToken = "7c70b24e116a07c9046cf867bac3eb53";
 
 
     @Test

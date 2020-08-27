@@ -2,8 +2,10 @@ package com.xxl.job.admin.controller.interceptor;
 
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.core.util.FtlUtil;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.service.LoginService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -23,35 +25,47 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
 	@Resource
 	private LoginService loginService;
 
+	@Value("${xxl.job.accessToken}")
+	private String accessToken;
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		
-		if (!(handler instanceof HandlerMethod)) {
-			return super.preHandle(request, response, handler);
-		}
+		if (request.getHeader("XXL-JOB-ACCESS-TOKEN")== null){
+			if (!(handler instanceof HandlerMethod)) {
+				return super.preHandle(request, response, handler);
+			}
 
-		// if need login
-		boolean needLogin = true;
-		boolean needAdminuser = false;
-		HandlerMethod method = (HandlerMethod)handler;
-		PermissionLimit permission = method.getMethodAnnotation(PermissionLimit.class);
-		if (permission!=null) {
-			needLogin = permission.limit();
-			needAdminuser = permission.adminuser();
-		}
+			// if need login
+			boolean needLogin = true;
+			boolean needAdminuser = false;
+			HandlerMethod method = (HandlerMethod)handler;
+			PermissionLimit permission = method.getMethodAnnotation(PermissionLimit.class);
+			if (permission!=null) {
+				needLogin = permission.limit();
+				needAdminuser = permission.adminuser();
+			}
 
-		if (needLogin) {
-			XxlJobUser loginUser = loginService.ifLogin(request, response);
-			if (loginUser == null) {
+			if (needLogin) {
+				XxlJobUser loginUser = loginService.ifLogin(request, response);
+				if (loginUser == null) {
+					response.setStatus(302);
+					response.setHeader("location", request.getContextPath()+"/toLogin");
+					return false;
+				}
+				if (needAdminuser && loginUser.getRole()!=1) {
+					throw new RuntimeException(I18nUtil.getString("system_permission_limit"));
+				}
+				request.setAttribute(LoginService.LOGIN_IDENTITY_KEY, loginUser);
+			}
+
+		}else {
+			if (!request.getHeader("XXL-JOB-ACCESS-TOKEN").equals(accessToken)){
 				response.setStatus(302);
 				response.setHeader("location", request.getContextPath()+"/toLogin");
 				return false;
 			}
-			if (needAdminuser && loginUser.getRole()!=1) {
-				throw new RuntimeException(I18nUtil.getString("system_permission_limit"));
-			}
-			request.setAttribute(LoginService.LOGIN_IDENTITY_KEY, loginUser);
-		}
+	}
+		
 
 		return super.preHandle(request, response, handler);
 	}
