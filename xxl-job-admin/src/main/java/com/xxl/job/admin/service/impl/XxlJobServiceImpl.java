@@ -262,7 +262,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		xxlJobInfo.setTriggerStatus(1);
-		xxlJobInfo.setTriggerLastTime(0);
+		xxlJobInfo.setTriggerLastTime(0L);
 		xxlJobInfo.setTriggerNextTime(nextTriggerTime);
 
 		xxlJobInfo.setUpdateTime(new Date());
@@ -275,8 +275,8 @@ public class XxlJobServiceImpl implements XxlJobService {
         XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(id);
 
 		xxlJobInfo.setTriggerStatus(0);
-		xxlJobInfo.setTriggerLastTime(0);
-		xxlJobInfo.setTriggerNextTime(0);
+		xxlJobInfo.setTriggerLastTime(0L);
+		xxlJobInfo.setTriggerNextTime(0L);
 
 		xxlJobInfo.setUpdateTime(new Date());
 		xxlJobInfoDao.update(xxlJobInfo);
